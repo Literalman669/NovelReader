@@ -137,37 +137,52 @@ export default function DiscoverScreen() {
         </View>
 
         {/* Quick Sources */}
-        <Text style={{ color: textColor, fontWeight: "700", fontSize: 18, marginBottom: 14 }}>
-          Popular Sources
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 16 }}>
+          <Ionicons name="globe-outline" size={18} color={textColor} />
+          <Text style={{ color: textColor, fontWeight: "700", fontSize: 18 }}>
+            Popular Sources
+          </Text>
+        </View>
         <View style={{ gap: 10, marginBottom: 28 }}>
           {QUICK_SOURCES.map((src) => (
             <TouchableOpacity
               key={src.name}
               onPress={() => setUrl(src.url)}
+              activeOpacity={0.8}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 backgroundColor: cardBg,
-                borderRadius: 14,
+                borderRadius: 16,
                 borderWidth: 1,
                 borderColor,
-                padding: 14,
+                padding: 16,
                 gap: 14,
+                shadowColor: "#000",
+                shadowOpacity: settings.theme === "dark" ? 0.15 : 0.04,
+                shadowRadius: 4,
+                shadowOffset: { width: 0, height: 1 },
+                elevation: 1,
               }}
             >
               <View style={{
-                width: 44, height: 44, borderRadius: 12,
-                backgroundColor: settings.theme === "dark" ? "#0f0f1a" : "#f1f5f9",
+                width: 46, height: 46, borderRadius: 14,
+                backgroundColor: settings.theme === "dark" ? "#1e1b4b" : "#eef2ff",
                 alignItems: "center", justifyContent: "center",
               }}>
                 <Text style={{ fontSize: 22 }}>{src.icon}</Text>
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: textColor, fontWeight: "700", fontSize: 15 }}>{src.name}</Text>
-                <Text style={{ color: mutedColor, fontSize: 12 }}>{src.description}</Text>
+                <Text style={{ color: mutedColor, fontSize: 12, marginTop: 1 }}>{src.description}</Text>
               </View>
-              <Ionicons name="arrow-forward" size={18} color={mutedColor} />
+              <View style={{
+                width: 30, height: 30, borderRadius: 10,
+                backgroundColor: settings.theme === "dark" ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.08)",
+                alignItems: "center", justifyContent: "center",
+              }}>
+                <Ionicons name="arrow-forward" size={15} color="#6366f1" />
+              </View>
             </TouchableOpacity>
           ))}
         </View>

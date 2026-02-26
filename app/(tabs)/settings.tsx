@@ -60,10 +60,13 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const SectionHeader = ({ title }: { title: string }) => (
-    <Text style={{ color: mutedColor, fontSize: 12, fontWeight: "700", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10, marginTop: 24 }}>
-      {title}
-    </Text>
+  const SectionHeader = ({ title, icon }: { title: string; icon?: string }) => (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12, marginTop: 28 }}>
+      {icon && <Ionicons name={icon as any} size={16} color={mutedColor} />}
+      <Text style={{ color: mutedColor, fontSize: 12, fontWeight: "700", textTransform: "uppercase", letterSpacing: 1 }}>
+        {title}
+      </Text>
+    </View>
   );
 
   const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -79,23 +82,35 @@ export default function SettingsScreen() {
         <Text style={{ fontSize: 28, fontWeight: "800", color: textColor, marginBottom: 4 }}>Settings</Text>
 
         {/* Profile Card */}
-        <View style={{ backgroundColor: cardBg, borderRadius: 16, padding: 16, borderWidth: 1, borderColor, marginTop: 16, flexDirection: "row", alignItems: "center", gap: 14 }}>
-          <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: "#6366f1", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ color: "#fff", fontSize: 22, fontWeight: "700" }}>
+        <View style={{
+          backgroundColor: cardBg, borderRadius: 20, padding: 18, borderWidth: 1, borderColor,
+          marginTop: 16, flexDirection: "row", alignItems: "center", gap: 16,
+          shadowColor: "#000", shadowOpacity: settings.theme === "dark" ? 0.2 : 0.05,
+          shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 3,
+        }}>
+          <View style={{
+            width: 56, height: 56, borderRadius: 18, backgroundColor: "#1e1b4b",
+            alignItems: "center", justifyContent: "center",
+            borderWidth: 2, borderColor: "#6366f1",
+          }}>
+            <Text style={{ color: "#a5b4fc", fontSize: 22, fontWeight: "800" }}>
               {profile?.username?.[0]?.toUpperCase() ?? "?"}
             </Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: textColor, fontWeight: "700", fontSize: 17 }}>{profile?.username ?? "User"}</Text>
-            <Text style={{ color: mutedColor, fontSize: 13 }}>{user?.email ?? ""}</Text>
+            <Text style={{ color: textColor, fontWeight: "800", fontSize: 18 }}>{profile?.username ?? "User"}</Text>
+            <Text style={{ color: mutedColor, fontSize: 13, marginTop: 2 }}>{user?.email ?? ""}</Text>
           </View>
-          <TouchableOpacity onPress={handleSignOut} style={{ padding: 8 }}>
-            <Ionicons name="log-out-outline" size={22} color="#ef4444" />
+          <TouchableOpacity
+            onPress={handleSignOut}
+            style={{ padding: 10, backgroundColor: "rgba(239,68,68,0.1)", borderRadius: 12 }}
+          >
+            <Ionicons name="log-out-outline" size={20} color="#ef4444" />
           </TouchableOpacity>
         </View>
 
         {/* Reading */}
-        <SectionHeader title="Reading" />
+        <SectionHeader title="Reading" icon="book-outline" />
         <View style={{ backgroundColor: cardBg, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor }}>
           <Row label="Theme">
             <View style={{ flexDirection: "row", gap: 6 }}>
@@ -175,7 +190,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* TTS */}
-        <SectionHeader title="Text-to-Speech" />
+        <SectionHeader title="Text-to-Speech" icon="volume-high-outline" />
         <View style={{ backgroundColor: cardBg, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor }}>
           <Row label="TTS Engine">
             <View style={{ flexDirection: "row", gap: 6 }}>
@@ -305,7 +320,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* About */}
-        <SectionHeader title="About" />
+        <SectionHeader title="About" icon="information-circle-outline" />
         <View style={{ backgroundColor: cardBg, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor }}>
           <Row label="Version"><Text style={{ color: mutedColor }}>1.0.0</Text></Row>
           <Row label="Storage"><Text style={{ color: mutedColor }}>Supabase + Local SQLite</Text></Row>
