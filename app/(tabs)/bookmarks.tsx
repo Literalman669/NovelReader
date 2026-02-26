@@ -146,11 +146,17 @@ export default function BookmarksScreen() {
           </View>
         ) : activeTab === "bookmarks" ? (
           bookmarks.length === 0 ? (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 12 }}>
-              <Text style={{ fontSize: 56 }}>🔖</Text>
-              <Text style={{ color: textColor, fontSize: 20, fontWeight: "700" }}>No bookmarks yet</Text>
-              <Text style={{ color: mutedColor, textAlign: "center" }}>
-                Tap the bookmark icon while reading to save your place
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 14, paddingHorizontal: 32 }}>
+              <View style={{
+                width: 80, height: 80, borderRadius: 24,
+                backgroundColor: "#1e1b4b",
+                alignItems: "center", justifyContent: "center", marginBottom: 4,
+              }}>
+                <Ionicons name="bookmark-outline" size={36} color="#818cf8" />
+              </View>
+              <Text style={{ color: textColor, fontSize: 20, fontWeight: "800" }}>No bookmarks yet</Text>
+              <Text style={{ color: mutedColor, textAlign: "center", lineHeight: 20, fontSize: 14 }}>
+                Tap the bookmark icon while reading{"\n"}to save your place
               </Text>
             </View>
           ) : (
@@ -206,11 +212,17 @@ export default function BookmarksScreen() {
             />
           )
         ) : highlights.length === 0 ? (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 12 }}>
-            <Text style={{ fontSize: 56 }}>✨</Text>
-            <Text style={{ color: textColor, fontSize: 20, fontWeight: "700" }}>No highlights yet</Text>
-            <Text style={{ color: mutedColor, textAlign: "center" }}>
-              Select text while reading to add highlights
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 14, paddingHorizontal: 32 }}>
+            <View style={{
+              width: 80, height: 80, borderRadius: 24,
+              backgroundColor: "#1e1b4b",
+              alignItems: "center", justifyContent: "center", marginBottom: 4,
+            }}>
+              <Ionicons name="color-wand-outline" size={36} color="#fbbf24" />
+            </View>
+            <Text style={{ color: textColor, fontSize: 20, fontWeight: "800" }}>No highlights yet</Text>
+            <Text style={{ color: mutedColor, textAlign: "center", lineHeight: 20, fontSize: 14 }}>
+              Select text while reading{"\n"}to add highlights
             </Text>
           </View>
         ) : (
