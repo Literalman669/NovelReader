@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>NovelReader</title>
+    <style id="expo-reset">
+      html, body { height: 100%; }
+      body { overflow: hidden; }
+      #root { display: flex; height: 100%; flex: 1; }
+      #error-overlay {
+        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: #0f0f1a; color: #ef4444; padding: 20px; z-index: 99999;
+        font-family: monospace; font-size: 13px; overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <div id="error-overlay"></div>
+    <script>
+      window.onerror = function(msg, src, line, col, err) {
+        var el = document.getElementById('error-overlay');
+        el.style.display = 'block';
+        el.innerHTML += '<h2 style="color:#ef4444">JS Error</h2><pre>' + msg + '\n\nAt: ' + src + ':' + line + '\n\n' + (err && err.stack ? err.stack : '') + '</pre><hr/>';
+      };
+      window.onunhandledrejection = function(e) {
+        var el = document.getElementById('error-overlay');
+        el.style.display = 'block';
+        el.innerHTML += '<h2 style="color:#f59e0b">Unhandled Promise</h2><pre>' + (e.reason && e.reason.stack ? e.reason.stack : String(e.reason)) + '</pre><hr/>';
+      };
+    </script>
+  </body>
+</html>
