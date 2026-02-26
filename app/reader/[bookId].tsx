@@ -94,16 +94,25 @@ export default function ReaderScreen() {
   useEffect(() => {
     if (hasRestoredScroll.current || loading || chapters.length === 0) return;
     const p = progress[bookId ?? ""];
-    if (p && (p.scroll_position ?? 0) > 0) {
-      hasRestoredScroll.current = true;
-      requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({
-          y: Number(p.scroll_position),
-          animated: false,
-        });
-      });
+    if (!p) return;
+    let scrollY: number;
+    if ((p.scroll_position ?? 0) > 0) {
+      scrollY = Number(p.scroll_position);
+    } else if ((p.character_position ?? 0) > 0) {
+      const lineHeight = settings.fontSize * settings.lineHeight;
+      const charsPerLine = Math.max(35, Math.floor(SCREEN_WIDTH / (settings.fontSize * 0.6)));
+      scrollY = (p.character_position / charsPerLine) * lineHeight;
+    } else {
+      return;
     }
-  }, [chapters.length, loading, bookId, progress]);
+    hasRestoredScroll.current = true;
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({
+        y: scrollY,
+        animated: false,
+      });
+    });
+  }, [chapters.length, loading, bookId, progress, settings.fontSize, settings.lineHeight]);
 
   const loadChapters = async () => {
     setLoading(true);
@@ -126,10 +135,17 @@ export default function ReaderScreen() {
     (event: { nativeEvent: { contentOffset: { y: number } } }) => {
       const y = event.nativeEvent.contentOffset.y;
       if (user && bookId) {
-        updateProgress(user.id, bookId, currentChapterIndex, y, 0);
+        const lineHeight = settings.fontSize * settings.lineHeight;
+        const charsPerLine = Math.max(35, Math.floor(SCREEN_WIDTH / (settings.fontSize * 0.6)));
+        const estimatedChar = Math.round((y / lineHeight) * charsPerLine);
+        updateProgress(user.id, bookId, {
+          chapter_index: currentChapterIndex,
+          scroll_position: y,
+          character_position: estimatedChar,
+        });
       }
     },
-    [user, bookId, currentChapterIndex]
+    [user, bookId, currentChapterIndex, settings.fontSize, settings.lineHeight]
   );
 
   const goToChapter = (index: number) => {

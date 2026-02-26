@@ -19,6 +19,11 @@ export const NativeTts = {
         utt.pitch = options.pitch ?? 1.0;
         utt.onend = () => options.onDone?.();
         utt.onerror = (e) => options.onError?.(e.error);
+        utt.onboundary = (e: SpeechSynthesisEvent) => {
+          if (e.name === "word" && e.charIndex != null) {
+            options.onBoundary?.({ charIndex: e.charIndex });
+          }
+        };
         window.speechSynthesis.speak(utt);
       } else {
         options.onDone?.();

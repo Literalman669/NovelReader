@@ -17,9 +17,11 @@ interface LibraryState {
   updateProgress: (
     userId: string,
     bookId: string,
-    chapterIndex: number,
-    scrollPosition: number,
-    charPosition: number
+    chapterIndexOrUpdates:
+      | number
+      | Partial<{ chapter_index: number; scroll_position: number; character_position: number }>,
+    scrollPosition?: number,
+    charPosition?: number
   ) => Promise<void>;
 }
 
@@ -82,15 +84,31 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     }));
   },
 
-  updateProgress: async (userId, bookId, chapterIndex, scrollPosition, charPosition) => {
+  updateProgress: async (userId, bookId, chapterIndexOrUpdates, scrollPosition?, charPosition?) => {
     const now = new Date().toISOString();
+    const existing = get().progress[bookId];
+    let chapter_index: number;
+    let scroll_position: number;
+    let character_position: number;
+
+    if (typeof chapterIndexOrUpdates === "object") {
+      const updates = chapterIndexOrUpdates;
+      chapter_index = updates.chapter_index ?? existing?.chapter_index ?? 0;
+      scroll_position = updates.scroll_position ?? existing?.scroll_position ?? 0;
+      character_position = updates.character_position ?? existing?.character_position ?? 0;
+    } else {
+      chapter_index = chapterIndexOrUpdates;
+      scroll_position = scrollPosition ?? 0;
+      character_position = charPosition ?? 0;
+    }
+
     await supabase.from("reading_progress").upsert(
       {
         user_id: userId,
         book_id: bookId,
-        chapter_index: chapterIndex,
-        scroll_position: scrollPosition,
-        character_position: charPosition,
+        chapter_index,
+        scroll_position,
+        character_position,
         last_read_at: now,
       },
       { onConflict: "user_id,book_id" }
@@ -100,9 +118,9 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
         ...state.progress,
         [bookId]: {
           ...state.progress[bookId],
-          chapter_index: chapterIndex,
-          scroll_position: scrollPosition,
-          character_position: charPosition,
+          chapter_index,
+          scroll_position,
+          character_position,
           last_read_at: now,
         } as ReadingProgress,
       },
