@@ -56,8 +56,8 @@ export default function ReaderScreen() {
   const [showControls, setShowControls] = useState(true);
   const [showChapters, setShowChapters] = useState(false);
   const [showFontMenu, setShowFontMenu] = useState(false);
-  const [showBookmarkNote, setShowBookmarkNote] = useState(false);
   const controlsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const book = books.find((b) => b.id === bookId);
   const chapter = chapters[currentChapterIndex];
@@ -125,9 +125,12 @@ export default function ReaderScreen() {
   const handleScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { y: number } } }) => {
       const y = event.nativeEvent.contentOffset.y;
-      if (user && bookId) {
-        updateProgress(user.id, bookId, currentChapterIndex, y, 0);
-      }
+      if (scrollSaveTimer.current) clearTimeout(scrollSaveTimer.current);
+      scrollSaveTimer.current = setTimeout(() => {
+        if (user && bookId) {
+          updateProgress(user.id, bookId, currentChapterIndex, y, 0);
+        }
+      }, 2000);
     },
     [user, bookId, currentChapterIndex]
   );
@@ -253,29 +256,51 @@ export default function ReaderScreen() {
         <View style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
           backgroundColor: surfaceColor,
-          borderTopWidth: 1, borderTopColor: borderColor,
-          paddingBottom: Math.max(insets.bottom, 12) + 20, paddingTop: 12, paddingHorizontal: 24,
-          flexDirection: "row", alignItems: "center", justifyContent: "space-between",
         }}>
-          <TouchableOpacity
-            onPress={() => currentChapterIndex > 0 && goToChapter(currentChapterIndex - 1)}
-            disabled={currentChapterIndex === 0}
-            style={{ opacity: currentChapterIndex === 0 ? 0.3 : 1 }}
-          >
-            <Ionicons name="chevron-back" size={28} color={textColor} />
-          </TouchableOpacity>
+          {/* Chapter progress bar */}
+          <View style={{ height: 3, backgroundColor: borderColor }}>
+            <View style={{
+              height: 3,
+              width: chapters.length > 0 ? `${((currentChapterIndex + 1) / chapters.length) * 100}%` : "0%",
+              backgroundColor: "#6366f1",
+              borderRadius: 0,
+            }} />
+          </View>
+          <View style={{
+            paddingBottom: Math.max(insets.bottom, 12) + 16, paddingTop: 14, paddingHorizontal: 24,
+            flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <TouchableOpacity
+              onPress={() => currentChapterIndex > 0 && goToChapter(currentChapterIndex - 1)}
+              disabled={currentChapterIndex === 0}
+              style={{
+                opacity: currentChapterIndex === 0 ? 0.3 : 1,
+                flexDirection: "row", alignItems: "center", gap: 4,
+              }}
+            >
+              <Ionicons name="chevron-back" size={22} color={textColor} />
+              <Text style={{ color: mutedColor, fontSize: 12, fontWeight: "600" }}>Prev</Text>
+            </TouchableOpacity>
 
-          <Text style={{ color: mutedColor, fontSize: 13 }}>
-            {currentChapterIndex + 1} / {chapters.length}
-          </Text>
+            <View style={{ alignItems: "center" }}>
+              <Text style={{ color: textColor, fontSize: 14, fontWeight: "700" }}>
+                {currentChapterIndex + 1}
+                <Text style={{ color: mutedColor, fontWeight: "400" }}> / {chapters.length}</Text>
+              </Text>
+            </View>
 
-          <TouchableOpacity
-            onPress={() => currentChapterIndex < chapters.length - 1 && goToChapter(currentChapterIndex + 1)}
-            disabled={currentChapterIndex === chapters.length - 1}
-            style={{ opacity: currentChapterIndex === chapters.length - 1 ? 0.3 : 1 }}
-          >
-            <Ionicons name="chevron-forward" size={28} color={textColor} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => currentChapterIndex < chapters.length - 1 && goToChapter(currentChapterIndex + 1)}
+              disabled={currentChapterIndex === chapters.length - 1}
+              style={{
+                opacity: currentChapterIndex === chapters.length - 1 ? 0.3 : 1,
+                flexDirection: "row", alignItems: "center", gap: 4,
+              }}
+            >
+              <Text style={{ color: mutedColor, fontSize: 12, fontWeight: "600" }}>Next</Text>
+              <Ionicons name="chevron-forward" size={22} color={textColor} />
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
